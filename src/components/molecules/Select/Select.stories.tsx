@@ -1,46 +1,30 @@
 import * as React from 'react';
-import { AvatarInline, Space, ButtonGroup, Button, Icon } from 'components/atoms';
-import { Form, useForm } from 'components/organisms';
-import { ButtonSize } from 'components/atoms/Button/Button';
+import { AvatarInline, Icon } from 'components/atoms';
+import { Template } from 'components/storybook';
+import { capitalize, makeid } from 'libs/string';
 
-import { Select, Option } from './Select';
+import { SelectComponent as Select } from './Select';
+import { Select as _Select, SelectProps, Options } from './components';
+import { Option } from './interfaces';
 import { exportStory } from '../../../libs';
+
+const { Pagination, Search } = Select;
 
 export default {
   title: exportStory('Select', 'molecules'),
-  component: Select,
+  component: _Select,
+  subcomponents: { Options, Pagination, Search },
+  argTypes: {
+    label: { control: 'text' },
+  },
 };
 
-const SizeSwitcher: React.FC<{ children: (size: ButtonSize) => React.ReactNode }> = ({ children }) => {
-  const [size, setSize] = React.useState<ButtonSize>('medium');
+const limit = 20;
 
-  return (
-    <>
-      <ButtonGroup className="mb-30">
-        <Button size="small" type={size === 'small' ? 'primary' : 'fill'} onClick={() => setSize('small')}>
-          Small
-        </Button>
-
-        <Button size="small" type={size === 'medium' ? 'primary' : 'fill'} onClick={() => setSize('medium')}>
-          Medium
-        </Button>
-
-        <Button size="small" type={size === 'large' ? 'primary' : 'fill'} onClick={() => setSize('large')}>
-          Large
-        </Button>
-      </ButtonGroup>
-
-      {children(size)}
-    </>
-  );
-};
-
-const limit = 15;
-
-export const Regular = (): React.ReactNode => {
-  const [form] = useForm();
+export const Regular: React.FC<SelectProps> & { args: SelectProps } = ({ children, ...props }) => {
   const [search, setSearch] = React.useState<string>('');
   const [list, setList] = React.useState<Option[]>([]);
+  const [value, setValue] = React.useState<any>();
   const [page, setPage] = React.useState(1);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoaded] = React.useState(true);
@@ -48,84 +32,67 @@ export const Regular = (): React.ReactNode => {
   React.useEffect(() => {
     setLoaded(true);
 
-    fetch(`https://api.first.org/data/v1/countries?limit=${limit}&offset=${(page - 1) * limit}`)
+    fetch(`https://randomuser.me/api/1.2/?page=${page}&results=${limit}&seed=abc&inc=id,name,picture`)
       .then((response) => response.json())
-      .then(({ data, total: count }) => {
+      .then(({ results }) => {
         const newList: Option[] = [];
-        Object.keys(data).forEach((item) => {
+        results.forEach((item) => {
           newList.push({
-            value: item,
-            text: <AvatarInline type="primary" shortAlt={item} alt={data[item].country} />,
+            value: makeid(),
+            text: (
+              <AvatarInline
+                img={item.picture.thumbnail}
+                type="primary"
+                alt={`${capitalize(item.name.title)} ${capitalize(item.name.first)} ${capitalize(item.name.last)}`}
+              />
+            ),
           });
         });
 
-        setTotal(count);
+        setTotal(1000);
         setList(newList);
         setLoaded(false);
       });
   }, [page]);
 
-  const handleChange = (values): void => {
-    console.log('values :>> ', values);
-  };
-
   return (
-    <SizeSwitcher>
-      {(size) => (
-        <Space direction="vertical" style={{ minWidth: 300 }}>
-          <Form
-            form={form}
-            initialValues={{
-              date: '10/10/2025',
-              time: '15-11-2020 11:30',
-              range: ['09-10-2029', '10-10-2029'],
-            }}
-            onFinish={handleChange}
-          >
-            <Form.Field name="select" label="Select" rules={[{ required: true }]}>
-              <Select
-                // options={list}
-                loading={loading}
-                size={size}
-                // mode="multiple"
-                // mode="single" // by default
-                placeholder="Select"
-                // optionsMode="dropdown" // by default
-                // optionsMode="box"
-                prefix={<Icon type="eye" />}
-                isClearable
-              >
-                <Select.Search value={search} onSearch={(val) => setSearch(val)} />
+    <Template>
+      <Select loading={loading} value={value} onChange={setValue} {...props}>
+        <Select.Search value={search} onSearch={(val) => setSearch(val)} />
 
-                <Select.Options>
-                  {list.map((item, i) => (
-                    <Select.Options.Item key={i} value={item.value}>
-                      {item.text}
-                    </Select.Options.Item>
-                  ))}
-                </Select.Options>
+        <Select.Options>
+          {list.map((item, i) => (
+            <Select.Options.Item key={i} value={item.value}>
+              {item.text}
+            </Select.Options.Item>
+          ))}
+        </Select.Options>
 
-                <Select.Pagination
-                  count={total}
-                  limit={limit}
-                  page={page}
-                  setPage={setPage}
-                  mode="regular"
-                  // mode="scroll"
-                />
-              </Select>
-            </Form.Field>
-          </Form>
-        </Space>
-      )}
-    </SizeSwitcher>
+        <Select.Pagination count={total} limit={limit} page={page} setPage={setPage} mode="regular" />
+      </Select>
+    </Template>
   );
 };
 
-export const OptionsBox = (): React.ReactNode => {
-  const [form] = useForm();
+Regular.args = {
+  mode: 'single',
+  optionsMode: 'dropdown',
+  valueMode: 'regular',
+  size: 'medium',
+  placeholder: 'Select',
+  newPlaceholder: 'Add new...',
+  emptyLabel: 'No found',
+  loading: false,
+  disabled: false,
+  isClearable: true,
+  prefix: <Icon type="eye" />,
+  suffix: undefined,
+};
+
+export const InfiniteScrollPagination: React.FC<SelectProps> & { args: SelectProps } = ({ children, ...props }) => {
   const [search, setSearch] = React.useState<string>('');
   const [list, setList] = React.useState<Option[]>([]);
+  const [value, setValue] = React.useState<any>();
   const [page, setPage] = React.useState(1);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoaded] = React.useState(true);
@@ -133,272 +100,46 @@ export const OptionsBox = (): React.ReactNode => {
   React.useEffect(() => {
     setLoaded(true);
 
-    fetch(`https://api.first.org/data/v1/countries?limit=${limit}&offset=${(page - 1) * limit}`)
+    fetch(`https://randomuser.me/api/1.2/?page=${page}&results=${limit}&seed=abc&inc=id,name,picture`)
       .then((response) => response.json())
-      .then(({ data, total: count }) => {
+      .then(({ results }) => {
         const newList: Option[] = [];
-        Object.keys(data).forEach((item) => {
+        results.forEach((item) => {
           newList.push({
-            value: item,
-            text: <AvatarInline type="primary" shortAlt={item} alt={data[item].country} />,
+            value: makeid(),
+            text: (
+              <AvatarInline
+                img={item.picture.thumbnail}
+                type="primary"
+                alt={`${capitalize(item.name.title)} ${capitalize(item.name.first)} ${capitalize(item.name.last)}`}
+              />
+            ),
           });
         });
 
-        setTotal(count);
+        setTotal(1000);
         setList(newList);
         setLoaded(false);
       });
   }, [page]);
 
-  const handleChange = (values): void => {
-    console.log('values :>> ', values);
-  };
-
   return (
-    <SizeSwitcher>
-      {(size) => (
-        <Space direction="vertical" style={{ minWidth: 300 }}>
-          <Form
-            form={form}
-            initialValues={{
-              date: '10/10/2025',
-              time: '15-11-2020 11:30',
-              range: ['09-10-2029', '10-10-2029'],
-            }}
-            onFinish={handleChange}
-          >
-            <Form.Field name="select" label="Select" rules={[{ required: true }]}>
-              <Select loading={loading} mode="single" size={size} placeholder="Select" optionsMode="box" isClearable>
-                <Select.Search value={search} onSearch={(val) => setSearch(val)} />
+    <Template>
+      <Select loading={loading} value={value} onChange={setValue} {...props}>
+        <Select.Search value={search} onSearch={(val) => setSearch(val)} />
 
-                <Select.Options>
-                  {list.map((item, i) => (
-                    <Select.Options.Item key={i} value={item.value}>
-                      {item.text}
-                    </Select.Options.Item>
-                  ))}
-                </Select.Options>
+        <Select.Options>
+          {list.map((item, i) => (
+            <Select.Options.Item key={i} value={item.value}>
+              {item.text}
+            </Select.Options.Item>
+          ))}
+        </Select.Options>
 
-                <Select.Pagination
-                  count={total}
-                  limit={limit}
-                  page={page}
-                  setPage={setPage}
-                  mode="regular"
-                  // mode="scroll"
-                />
-              </Select>
-            </Form.Field>
-          </Form>
-        </Space>
-      )}
-    </SizeSwitcher>
+        <Select.Pagination count={total} limit={limit} page={page} setPage={setPage} mode="scroll" />
+      </Select>
+    </Template>
   );
 };
 
-export const OptionsMultiple = (): React.ReactNode => {
-  const [form] = useForm();
-  const [search, setSearch] = React.useState<string>('');
-  const [loading, setLoaded] = React.useState(true);
-  const [list, setList] = React.useState<Option[]>([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
-
-  React.useEffect(() => {
-    setLoaded(true);
-
-    fetch(`https://api.first.org/data/v1/countries?limit=${limit}&offset=${(page - 1) * limit}`)
-      .then((response) => response.json())
-      .then(({ data, total: count }) => {
-        const newList: Option[] = [];
-        Object.keys(data).forEach((item) => {
-          newList.push({
-            value: item,
-            text: <AvatarInline type="primary" shortAlt={item} alt={data[item].country} />,
-          });
-        });
-
-        setTotal(count);
-        setList(newList);
-        setLoaded(false);
-      });
-  }, [page]);
-
-  const handleChange = (values): void => {
-    console.log('values :>> ', values);
-  };
-
-  return (
-    <SizeSwitcher>
-      {(size) => (
-        <Space direction="vertical" style={{ minWidth: 300 }}>
-          <Form
-            form={form}
-            initialValues={{
-              date: '10/10/2025',
-              time: '15-11-2020 11:30',
-              range: ['09-10-2029', '10-10-2029'],
-            }}
-            onFinish={handleChange}
-          >
-            <Form.Field name="select" label="Select" rules={[{ required: true }]}>
-              <Select loading={loading} mode="multiple" size={size} placeholder="Select" optionsMode="box" isClearable>
-                <Select.Search value={search} onSearch={(val) => setSearch(val)} />
-
-                <Select.Options>
-                  {list.map((item, i) => (
-                    <Select.Options.Item key={i} value={item.value}>
-                      {item.text}
-                    </Select.Options.Item>
-                  ))}
-                </Select.Options>
-
-                <Select.Pagination count={total} limit={limit} page={page} setPage={setPage} mode="regular" />
-              </Select>
-            </Form.Field>
-          </Form>
-        </Space>
-      )}
-    </SizeSwitcher>
-  );
-};
-
-export const InfiniteScrollPagination = (): React.ReactNode => {
-  const [form] = useForm();
-  const [search, setSearch] = React.useState<string>('');
-  const [list, setList] = React.useState<Option[]>([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
-  const [loading, setLoaded] = React.useState(true);
-
-  React.useEffect(() => {
-    setLoaded(true);
-
-    fetch(`https://api.first.org/data/v1/countries?limit=${limit}&offset=${(page - 1) * limit}`)
-      .then((response) => response.json())
-      .then(({ data, total: count }) => {
-        const newList: Option[] = [];
-        Object.keys(data).forEach((item) => {
-          newList.push({
-            value: item,
-            text: <AvatarInline type="primary" shortAlt={item} alt={data[item].country} />,
-          });
-        });
-
-        setTotal(count);
-        setList(newList);
-        setLoaded(false);
-      });
-  }, [page]);
-
-  const handleChange = (values): void => {
-    console.log('values :>> ', values);
-  };
-
-  return (
-    <SizeSwitcher>
-      {(size) => (
-        <Space direction="vertical" style={{ minWidth: 300 }}>
-          <Form
-            form={form}
-            initialValues={{
-              date: '10/10/2025',
-              time: '15-11-2020 11:30',
-              range: ['09-10-2029', '10-10-2029'],
-            }}
-            onFinish={handleChange}
-          >
-            <Form.Field name="select" label="Select" rules={[{ required: true }]}>
-              <Select loading={loading} mode="multiple" size={size} placeholder="Select" isClearable>
-                <Select.Search value={search} onSearch={(val) => setSearch(val)} />
-
-                <Select.Options>
-                  {list.map((item, i) => (
-                    <Select.Options.Item key={i} value={item.value}>
-                      {item.text}
-                    </Select.Options.Item>
-                  ))}
-                </Select.Options>
-
-                <Select.Pagination count={total} limit={limit} page={page} setPage={setPage} mode="scroll" />
-              </Select>
-            </Form.Field>
-          </Form>
-        </Space>
-      )}
-    </SizeSwitcher>
-  );
-};
-
-export const TagsMode = (): React.ReactNode => {
-  const [form] = useForm();
-  const [, setSearch] = React.useState<string>('');
-  const [list, setList] = React.useState<Option[]>([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
-  const [loading, setLoaded] = React.useState(true);
-
-  React.useEffect(() => {
-    setLoaded(true);
-
-    fetch(`https://api.first.org/data/v1/countries?limit=${limit}&offset=${(page - 1) * limit}`)
-      .then((response) => response.json())
-      .then(({ data, total: count }) => {
-        const newList: Option[] = [];
-        Object.keys(data).forEach((item) => {
-          newList.push({
-            value: item,
-            text: data[item].country,
-          });
-        });
-
-        setTotal(count);
-        setList(newList);
-        setLoaded(false);
-      });
-  }, [page]);
-
-  const handleChange = (values): void => {
-    console.log('values :>> ', values);
-  };
-
-  return (
-    <SizeSwitcher>
-      {(size) => (
-        <Space direction="vertical" style={{ minWidth: 300 }}>
-          <Form
-            form={form}
-            initialValues={{
-              date: '10/10/2025',
-              time: '15-11-2020 11:30',
-              range: ['09-10-2029', '10-10-2029'],
-            }}
-            onFinish={handleChange}
-          >
-            <Form.Field name="select" label="Select" rules={[{ required: true }]}>
-              <Select
-                loading={loading}
-                mode="tags"
-                size={size}
-                newPlaceholder="Add new..."
-                isClearable
-                onSearch={(val) => setSearch(val)}
-                onAddNew={(value) => setList([{ value, text: value }, ...list])}
-              >
-                <Select.Options mode="multiple">
-                  {list.map((item, i) => (
-                    <Select.Options.Item key={i} value={item.value}>
-                      {item.text}
-                    </Select.Options.Item>
-                  ))}
-                </Select.Options>
-
-                <Select.Pagination count={total} limit={limit} page={page} setPage={setPage} mode="scroll" />
-              </Select>
-            </Form.Field>
-          </Form>
-        </Space>
-      )}
-    </SizeSwitcher>
-  );
-};
+InfiniteScrollPagination.args = Regular.args;

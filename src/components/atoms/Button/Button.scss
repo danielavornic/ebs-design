@@ -34,19 +34,19 @@
 
   // button type (Color)
   &--primary {
-    border-color: $primary-color;
-    background-color: $primary-color;
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
     color: $white;
 
     &:hover {
-      border-color: $primary-600;
-      background-color: $primary-600;
+      border-color: var(--primary-600);
+      background-color: var(--primary-600);
     }
 
     &:active,
     &.active {
-      border-color: $primary-700;
-      background-color: $primary-700;
+      border-color: var(--primary-700);
+      background-color: var(--primary-700);
     }
 
     .ebs-icon {
@@ -68,8 +68,8 @@
     color: $white;
 
     @include hover-state {
-      border-color: $primary-600;
-      background-color: $primary-600;
+      border-color: var(--primary-600);
+      background-color: var(--primary-600);
     }
 
     .ebs-button,
@@ -92,13 +92,13 @@
   }
 
   &--fill {
-    border-color: $primary-100;
-    background-color: $primary-100;
-    color: $primary-color;
+    border-color: var(--primary-100);
+    background-color: var(--primary-100);
+    color: var(--primary-color);
 
     &:hover {
-      border-color: $primary-color;
-      background-color: $primary-color;
+      border-color: var(--primary-color);
+      background-color: var(--primary-color);
       color: $white;
 
       .ebs-button,
@@ -109,8 +109,8 @@
 
     &:active,
     &.active {
-      border-color: $primary-600;
-      background-color: $primary-600;
+      border-color: var(--primary-600);
+      background-color: var(--primary-600);
       color: $white;
 
       .ebs-button,
@@ -120,12 +120,12 @@
     }
 
     .ebs-icon {
-      color: $primary-color;
+      color: var(--primary-color);
     }
   }
 
   &--fill & {
-    color: $primary-color;
+    color: var(--primary-color);
   }
 
   &--ghost.ebs-button__wrapper {
@@ -167,14 +167,14 @@
 
   &--text {
     background-color: transparent;
-    color: $primary-color;
+    color: var(--primary-color);
 
     &:hover {
       background-color: transparent;
 
       .ebs-button,
       .ebs-icon {
-        color: $primary-600;
+        color: var(--primary-600);
       }
     }
 
@@ -184,17 +184,17 @@
 
       .ebs-button,
       .ebs-icon {
-        color: $primary-700;
+        color: var(--primary-700);
       }
     }
 
     .ebs-icon {
-      color: $primary-color;
+      color: var(--primary-color);
     }
   }
 
   &--text & {
-    color: $primary-color;
+    color: var(--primary-color);
   }
 
   &--disabled {
@@ -216,6 +216,10 @@
     padding: rem($btn-padding-y-lg $btn-padding-x-lg);
     font-weight: $btn-font-weight-lg;
     font-size: rem($btn-font-size-lg);
+
+    &.ebs-button--is-icon {
+      padding: rem($btn-padding-y-lg);
+    }
   }
 
   &--medium {
@@ -226,6 +230,10 @@
     padding: rem($btn-padding-y $btn-padding-x);
     font-weight: $btn-font-weight;
     font-size: rem($btn-font-size);
+
+    &.ebs-button--is-icon {
+      padding: rem($btn-padding-y);
+    }
   }
 
   &--small {
@@ -237,6 +245,10 @@
     font-weight: $btn-font-weight-sm;
     font-size: rem($btn-font-size-sm);
     line-height: rem($btn-line-height-sm);
+
+    &.ebs-button--is-icon {
+      padding: rem($btn-padding-y-sm);
+    }
   }
 
   &__wrapper {
@@ -246,6 +258,24 @@
     border-radius: rem($border-radius);
     transition: $transition-base;
     border: 1px solid transparent;
+
+    &.ebs-button--round {
+      border-radius: 100%;
+
+      .ebs-button {
+        @include flex;
+      }
+
+      &.ebs-button--small .ebs-button {
+        padding: rem($btn-padding-x-sm);
+      }
+      &.ebs-button--medium .ebs-button {
+        padding: rem($btn-padding-x);
+      }
+      &.ebs-button--large .ebs-button {
+        padding: rem($btn-padding-x-lg);
+      }
+    }
   }
 
   &__loading {

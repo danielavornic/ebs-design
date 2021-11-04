@@ -6,14 +6,13 @@ import { SizeType } from 'types';
 export type SpaceSize = SizeType | number;
 export type SpaceDirection = 'horizontal' | 'vertical';
 
-export interface SpaceProps {
-  className?: string;
-  style?: React.CSSProperties;
+export interface SpaceProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: SpaceSize | [SpaceSize, SpaceSize];
   direction?: SpaceDirection;
   align?: 'start' | 'end' | 'center' | 'baseline';
   justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between';
   wrap?: boolean;
+  inline?: boolean;
 }
 
 // Default sizes
@@ -41,6 +40,7 @@ export const Space: React.FC<SpaceProps> = ({
   justify,
   className,
   children,
+  inline,
   style,
   ...props
 }) => {
@@ -77,6 +77,7 @@ export const Space: React.FC<SpaceProps> = ({
           [`ebs-space--${direction}`]: direction,
           [`ebs-space__align--${align}`]: align,
           [`ebs-space__justify--${justify}`]: justify,
+          [`ebs-space__display--inline`]: inline,
         },
         className,
       )}

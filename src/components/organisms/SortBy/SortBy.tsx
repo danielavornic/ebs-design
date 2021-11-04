@@ -11,10 +11,10 @@ interface Sort {
 
 enum SortDirection {
   ASC = 'asc',
-  DESC = 'desc'
+  DESC = 'desc',
 }
 
-export interface SortByProps {
+export interface SortByProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   title?: string;
   sortByTitle?: string;
   value?: string;
@@ -30,11 +30,12 @@ export const SortBy: React.FC<SortByProps> = ({
   options,
   value,
   onChange,
+  ...props
 }) => {
   const [selected, setSelected] = React.useState(options.find((item) => item.value === value?.replace('-', '')));
   const [type, setType] = React.useState(value?.charAt(0) === '-' ? SortDirection.DESC : SortDirection.ASC);
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     if (selected) {
       onChange((type === SortDirection.ASC ? '' : '-') + selected?.value);
     } else {
@@ -43,10 +44,10 @@ export const SortBy: React.FC<SortByProps> = ({
   }, [selected, type]);
 
   const onChangeHandler = React.useCallback((newValue) => {
-    setSelected((prevActive) => prevActive?.value !== newValue.value ? newValue : undefined);
+    setSelected((prevActive) => (prevActive?.value !== newValue.value ? newValue : undefined));
   }, []);
 
-  const onChangeType = () => {
+  const onChangeType = (): void => {
     if (!selected && options.length) {
       setSelected(options[0]);
     }
@@ -54,7 +55,7 @@ export const SortBy: React.FC<SortByProps> = ({
   };
 
   return (
-    <div className={`ebs-sort-by__wrapper ebs-sort-${type}`}>
+    <div className={`ebs-sort-by__wrapper ebs-sort-${type}`} {...props}>
       <Button type="ghost" icon="sort" size={size} onClick={onChangeType} />
       <Tooltip
         bodyClass="ebs-sort-by__tooltip"
@@ -64,20 +65,20 @@ export const SortBy: React.FC<SortByProps> = ({
           <>
             <div className="ebs-sort-by__tooltip-title">{title}</div>
             <div className="ebs-sort-by__tooltip-items">
-              {options && options.map((item) => {
-                const active = selected?.value === item.value;
-                return (
-                  <div
-                    key={item.value}
-                    className={cn('ebs-sort-by__tooltip-item', {'ebs-sort-by__tooltip-item--active': active})}
-                    onClick={() => onChangeHandler(item)}
-                  >
-                    {item.title}
-                    {active && <Icon type="check" model="bold" />}
-                  </div>
-                );
-              })
-              }
+              {options &&
+                options.map((item) => {
+                  const active = selected?.value === item.value;
+                  return (
+                    <div
+                      key={item.value}
+                      className={cn('ebs-sort-by__tooltip-item', { 'ebs-sort-by__tooltip-item--active': active })}
+                      onClick={() => onChangeHandler(item)}
+                    >
+                      {item.title}
+                      {active && <Icon type="check" model="bold" />}
+                    </div>
+                  );
+                })}
             </div>
           </>
         }

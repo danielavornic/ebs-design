@@ -3,15 +3,15 @@ import cn from 'classnames';
 import { Panel, PanelProps } from './Panel';
 import { Tab, TabProps } from './Tab';
 
-export interface TabsProps {
+export interface TabsComposition {
   Tab: React.FC<TabProps>;
   Panel: React.FC<PanelProps>;
 }
 
-export interface TabsMainProps {
+export interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   activeTab?: string;
+  contentClass?: string;
   setActiveTab?: (key: string) => void;
-  className?: string;
 }
 
 export interface TabsContext {
@@ -21,7 +21,14 @@ export interface TabsContext {
 
 const TabsContext = React.createContext<TabsContext | undefined>(undefined);
 
-const Tabs: React.FC<TabsMainProps> & TabsProps = ({ activeTab, setActiveTab, className, children }) => {
+const Tabs: React.FC<TabsProps> & TabsComposition = ({
+  activeTab,
+  setActiveTab,
+  className,
+  contentClass,
+  children,
+  ...props
+}) => {
   const memoizedContextValue = React.useMemo(
     () => ({
       activeTab,
@@ -31,7 +38,7 @@ const Tabs: React.FC<TabsMainProps> & TabsProps = ({ activeTab, setActiveTab, cl
   );
 
   return (
-    <TabsContext.Provider value={memoizedContextValue}>
+    <TabsContext.Provider value={memoizedContextValue} {...props}>
       <div className={cn(`ebs-tabs`, className)}>
         {children &&
           React.Children.map(children, (child) => {
@@ -40,7 +47,7 @@ const Tabs: React.FC<TabsMainProps> & TabsProps = ({ activeTab, setActiveTab, cl
             }
           })}
       </div>
-      <div className={`ebs-tabs__content`}>
+      <div className={cn(`ebs-tabs__content`, contentClass)}>
         {children &&
           React.Children.map(children, (child) => {
             if (child && (child as React.ReactElement).type !== Tab) {

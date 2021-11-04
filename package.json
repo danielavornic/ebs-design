@@ -1,6 +1,6 @@
 {
   "name": "ebs-design",
-  "version": "0.0.1-beta.78",
+  "version": "0.0.1-beta.110",
   "description": "EBS Design System React UI elements.",
   "author": "EBS Integrator <contact@ebs-integrator.com> (https://ebs-integrator.com/)",
   "maintainers": [
@@ -43,10 +43,11 @@
     "build": "rm -rf dist && rollup -c rollup.config.js",
     "start": "rollup -c -w",
     "prepare": "yarn run build",
-    "storybook": "start-storybook -p 9009",
-    "build:storybook": "build-storybook -o docs-build"
+    "storybook": "start-storybook -p 9009 -s ./.storybook/images",
+    "build:storybook": "build-storybook -o docs-build -s ./.storybook/images"
   },
   "dependencies": {
+    "@storybook/addon-controls": "^6.3.7",
     "classnames": "^2.2.6",
     "dayjs": "^1.9.4",
     "rc-field-form": "^1.17.4",
@@ -54,24 +55,26 @@
     "rc-table": "^7.12.3",
     "rc-upload": "^3.3.4",
     "react-animate-height": "^2.0.23",
-    "react-datepicker": "^4.1.1",
+    "react-datepicker": "^4.2.0",
     "react-phone-input-2": "^2.13.8",
-    "react-popper-tooltip": "^4.2.0",
-    "react-use": "^17.1.0"
+    "react-popper-tooltip": "^4.3.0",
+    "react-use": "^17.2.4"
   },
   "peerDependencies": {
+    "node-sass": ">=4.0.0 <5.0.0",
     "react": ">= 16.8",
-    "react-dom": ">= 16.8",
-    "node-sass": ">=4.0.0 <5.0.0"
+    "react-dom": ">= 16.8"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.3.0",
-    "@storybook/addon-docs": "^6.3.0",
-    "@storybook/addon-essentials": "^6.3.0",
-    "@storybook/addon-links": "^6.3.0",
-    "@storybook/preset-create-react-app": "^3.1.7",
+    "@storybook/addon-actions": "^6.3.7",
+    "@storybook/addon-docs": "^6.3.7",
+    "@storybook/addon-essentials": "^6.3.7",
+    "@storybook/addon-links": "^6.3.7",
+    "@storybook/addons": "^6.3.7",
+    "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/preset-typescript": "^3.0.0",
-    "@storybook/react": "^6.3.0",
+    "@storybook/react": "^6.3.7",
+    "@storybook/theming": "^6.3.7",
     "@svgr/rollup": "^2.4.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -110,6 +113,7 @@
     "rollup-plugin-scss": "^2.6.1",
     "rollup-plugin-typescript2": "^0.17.0",
     "rollup-plugin-url": "^1.4.0",
+    "storybook-addon-themes": "^6.1.0",
     "typescript": "^3.9.7"
   },
   "files": [

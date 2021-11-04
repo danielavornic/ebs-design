@@ -1,109 +1,68 @@
 import * as React from 'react';
+import { Template } from 'components/storybook';
 
-import { InputPhone } from './InputPhone';
+import { InputPhone, InputPhoneProps } from './InputPhone';
 import { exportStory } from '../../../libs';
 
 export default {
   title: exportStory('InputPhone', 'molecules'),
   component: InputPhone,
+  argTypes: {
+    label: { control: 'text' },
+    extra: { control: 'text' },
+  },
 };
 
-export const Regular: React.FC = () => (
-  <div className="storybook-rows">
-    <div className="storybook-row">
-      <div className="storybook-header">Input Phone</div>
+export const Regular: React.FC<InputPhoneProps> & { args: InputPhoneProps } = ({ children, ...props }) => {
+  const [value, setValue] = React.useState('');
 
-      <div className="storybook-row-item">
-        <div className="storybook-label">Inactive</div>
-        <InputPhone />
-      </div>
+  return (
+    <Template>
+      <InputPhone value={value} onChange={setValue} {...props} />
+    </Template>
+  );
+};
 
-      <div className="storybook-row-item">
-        <div className="storybook-label">Active</div>
-        <InputPhone value="+37378014910" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Error</div>
-        <InputPhone hasError />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Disabled</div>
-        <InputPhone disabled />
-      </div>
-    </div>
-
-    <div className="storybook-row">
-      <div className="storybook-header">Input Phone + Label</div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Inactive</div>
-        <InputPhone label="Label" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Active</div>
-        <InputPhone label="Label" value="+37378014910" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Error</div>
-        <InputPhone label="Label" hasError />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Disabled</div>
-        <InputPhone label="Label" disabled />
-      </div>
-    </div>
-
-    <div className="storybook-row">
-      <div className="storybook-header">Input Phone + Extra</div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Inactive</div>
-        <InputPhone extra="Extra" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Active</div>
-        <InputPhone extra="Extra" value="+37378014910" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Error</div>
-        <InputPhone extra="Extra" hasError />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Disabled</div>
-        <InputPhone extra="Extra" disabled />
-      </div>
-    </div>
-
-    <div className="storybook-row">
-      <div className="storybook-header">Input Phone + Label & Extra</div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Inactive</div>
-        <InputPhone label="Label" extra="Extra" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Active</div>
-        <InputPhone label="Label" extra="Extra" value="+37378014910" />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Error</div>
-        <InputPhone label="Label" extra="Extra" hasError />
-      </div>
-
-      <div className="storybook-row-item">
-        <div className="storybook-label">Disabled</div>
-        <InputPhone label="Label" extra="Extra" disabled />
-      </div>
-    </div>
-  </div>
-);
+Regular.args = {
+  size: 'medium',
+  country: 'md',
+  isClearable: true,
+  value: '',
+  onlyCountries: [],
+  preferredCountries: [],
+  excludeCountries: [],
+  placeholder: 'Phone field',
+  searchPlaceholder: '',
+  searchNotFound: 'Not found',
+  disabled: undefined,
+  autoFormat: undefined,
+  enableAreaCodes: undefined,
+  enableTerritories: undefined,
+  disableCountryCode: undefined,
+  disableDropdown: undefined,
+  enableLongNumbers: undefined,
+  countryCodeEditable: undefined,
+  enableSearch: undefined,
+  disableSearchIcon: undefined,
+  regions: undefined,
+  inputProps: {},
+  localization: {},
+  masks: {},
+  areaCodes: {},
+  preserveOrder: [],
+  defaultMask: undefined,
+  alwaysDefaultMask: undefined,
+  prefix: undefined,
+  copyNumbersOnly: undefined,
+  renderStringAsFlag: undefined,
+  autocompleteSearch: undefined,
+  jumpCursorToEnd: undefined,
+  priority: undefined,
+  enableAreaCodeStretch: undefined,
+  enableClickOutside: undefined,
+  showDropdown: undefined,
+  defaultErrorMessage: undefined,
+  specialLabel: undefined,
+  disableInitialCountryGuess: undefined,
+  disableCountryGuess: undefined,
+};

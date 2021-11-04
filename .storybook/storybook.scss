@@ -16,10 +16,6 @@
     .container {
       min-width: 500px;
     }
-
-    .ebs-select__wrapper {
-      min-width: 300px;
-    }
   }
 
   .ebs-layout {
@@ -133,11 +129,29 @@
     min-height: 90vh;
   }
 
-  .ebs-select__wrapper {
-    min-width: 300px;
-  }
-
   #story--react-ebs-ui-organisms-layout-sidebar--regular {
     min-height: 50vh;
+  }
+
+  #story--react-ebs-ui-molecules-loader--regular .ebs-loader {
+    height: 200px;
+  }
+
+  .ebs-loader {
+    > .ebs-loader__spinner.fixed {
+      position: absolute;
+    }
+  }
+}
+
+.ebs-select__wrapper {
+  min-width: 300px;
+  max-width: 300px;
+}
+
+@media (max-width: 500px) {
+  .ebs-select__wrapper,
+  .ebs-space__item {
+    width: 100%;
   }
 }

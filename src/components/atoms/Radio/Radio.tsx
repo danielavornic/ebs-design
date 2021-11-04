@@ -12,18 +12,17 @@ export interface Option {
   disabled?: boolean;
 }
 
-export interface Props {
-  className?: string;
-  radioAlign?: RadioAlign;
+export interface RadioProps extends Omit<Omit<React.HTMLAttributes<HTMLDivElement>, 'value'>, 'onChange'> {
+  name?: string;
   textClass?: string;
-  textStyle?: React.CSSProperties;
-  onChange?: (e?: any) => void;
+  radioAlign?: RadioAlign;
   value?: RadioValue;
   options?: Option[];
-  name?: string;
+  textStyle?: React.CSSProperties;
+  onChange?: (value?: string | number) => void;
 }
 
-export const Radio = React.forwardRef<HTMLInputElement, Props>(
+export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   ({ className, radioAlign = 'left', textClass = '', textStyle, options, value, onChange, ...props }, ref) => {
     const name = props.name || React.useMemo(() => makeid(), []);
 
@@ -46,19 +45,22 @@ export const Radio = React.forwardRef<HTMLInputElement, Props>(
     return (
       <div className={cn(`ebs-radio__group`, `ebs-radio__align--${radioAlign}`, className)}>
         {options.map((option, idx) => (
-          <div key={idx} className={cn(`ebs-radio__wrapper`, { 'has-text': option.text, disabled: option.disabled })}>
+          <div
+            key={idx}
+            className={cn(`ebs-radio__wrapper`, { 'has-text': option.text, disabled: option.disabled })}
+            onClick={() => onClickHandler(option.value)}
+          >
             <input
               ref={ref}
               type="radio"
               className="ebs-radio__input"
               name={name}
-              onClick={() => onClickHandler(option.value)}
               value={option.value}
               onChange={onChangeHandler}
-              {...(value !== undefined && option.value !== undefined
-                ? { checked: `${value}` === `${option.value}` }
-                : {})}
               disabled={option.disabled}
+              {...(value !== undefined && option.value !== undefined
+                ? { ...props, checked: `${value}` === `${option.value}` }
+                : props)}
             />
 
             <div className="ebs-radio">

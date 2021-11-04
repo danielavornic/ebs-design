@@ -63,7 +63,7 @@
     margin-left: auto;
 
     // 191px
-    width: calc(100% - #{$sidebar-width});
+    width: calc(100% - #{rem($sidebar-width)});
   }
 
   &__content-wrapper {
@@ -92,7 +92,7 @@
   }
 
   &__container {
-    height: calc(100vh - #{$layout-top-bar-height});
+    height: calc(100vh - #{rem($layout-top-bar-height)});
     overflow: hidden auto;
   }
 
@@ -131,7 +131,8 @@
   }
 
   .ebs-sidebar {
-    height: rem(calc(100vh - #{$layout-top-bar-height}));
+    @include flex-column;
+    height: rem(calc(100vh - #{rem($layout-top-bar-height)}));
 
     @include mq($until: small-desktop) {
       margin-top: 0;
@@ -165,7 +166,7 @@
           border-right: 1px solid $layout-top-bar-toggler-border-color;
 
           &:hover {
-            background-color: $primary-000;
+            background-color: var(--primary-000);
 
             .ebs-icon {
               color: $layout-top-bar-toggler-hover-color;

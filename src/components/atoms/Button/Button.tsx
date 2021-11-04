@@ -7,19 +7,18 @@ export type ButtonSize = 'small' | 'medium' | 'large';
 
 export type ButtonType = 'text' | 'primary' | 'fill' | 'ghost' | 'dark' | 'light';
 
-export interface ButtonProps {
+export interface ButtonProps extends Omit<Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>, 'prefix'> {
   onClick?: () => void;
   prefix?: React.ReactNode;
   size?: ButtonSize;
   type?: ButtonType;
   loading?: boolean;
   submit?: boolean;
-  disabled?: boolean;
-  className?: string;
   buttonClass?: string;
   form?: string;
-  icon?: string;
+  icon?: any;
   block?: boolean;
+  round?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -33,6 +32,7 @@ export const Button: React.FC<ButtonProps> = ({
   icon,
   loading,
   block,
+  round,
   ...props
 }) => {
   return (
@@ -46,9 +46,10 @@ export const Button: React.FC<ButtonProps> = ({
           'ebs-button--block': block,
           'ebs-button--prefix': prefix,
           'ebs-button--icon': icon,
+          'ebs-button--round': round,
         },
       )}
-      onClick={onClick}
+      onClick={!props.disabled ? onClick : undefined}
       role="presentation"
     >
       {prefix ? (
@@ -65,12 +66,21 @@ export const Button: React.FC<ButtonProps> = ({
         disabled={props.disabled || loading}
         {...props}
       >
-        {icon ? <Icon type={icon} /> : props.children}
+        {icon ? (
+          <Icon
+            component={typeof icon !== 'string' ? icon : undefined}
+            type={typeof icon === 'string' ? icon : undefined}
+          />
+        ) : (
+          props.children
+        )}
       </button>
     </div>
   );
 };
 
-export const ButtonGroup: React.FC<{ className?: string }> = ({ children, className }) => (
-  <div className={cn(`ebs-button__group`, className)}>{children}</div>
+export const ButtonGroup: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => (
+  <div className={cn(`ebs-button__group`, className)} {...props}>
+    {children}
+  </div>
 );

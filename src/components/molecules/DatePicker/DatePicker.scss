@@ -27,9 +27,15 @@
   // Clear icon
   .react-datepicker__close-icon {
     &::after {
-      background-color: $primary-color;
-      font-size: rem(14px);
+      background-color: white;
+      border-radius: 0;
+      color: $text-color;
+      font-size: rem(22px);
+      height: rem(20px);
+      display: inline-block;
+      overflow: hidden;
     }
+    padding-right: rem(6px);
   }
 }
 
@@ -40,11 +46,11 @@
   border-radius: rem($border-radius);
   outline: none;
   font-size: rem(14px);
-  line-height: rem($line-height-base);
   padding-right: rem($base-size);
   padding: rem($calendar-padding-y $calendar-padding-x);
   color: $heading-color;
   box-sizing: border-box;
+  min-height: 100%;
   transition: $transition-base;
 
   @include text-ellipsis;
@@ -70,7 +76,7 @@
   }
 
   @include hover-state {
-    border-color: $primary-color;
+    border-color: var(--primary-color);
     background-color: $white;
   }
 
@@ -82,6 +88,7 @@
   // Sizes
   &--small {
     $padding-y: $calendar-padding-y-sm - 1px; // 1px is the border-width
+    min-height: rem($base-size-sm);
 
     font-size: rem(12px);
     padding: rem($padding-y $calendar-padding-x-sm);
@@ -89,12 +96,14 @@
   }
   &--medium {
     $padding-y: $calendar-padding-y - 1px; // 1px is the border-width
+    min-height: rem($base-size);
 
     padding: rem($padding-y $calendar-padding-x);
     padding-right: rem($base-size);
   }
   &--large {
     $padding-y: $calendar-padding-y-lg - 1px; // 1px is the border-width
+    min-height: rem($base-size-lg);
 
     padding: rem($padding-y $calendar-padding-x-lg);
     padding-right: rem($base-size-lg);
@@ -108,11 +117,11 @@
 
   &.is-opened {
     .ebs-datepicker {
-      border-color: $primary-color;
+      border-color: var(--primary-color);
     }
     .react-datepicker-wrapper:first-child {
       .ebs-datepicker {
-        border-right-color: $primary-color;
+        border-right-color: var(--primary-color);
       }
     }
   }
@@ -120,11 +129,11 @@
   &:not(.disabled) {
     @include hover-state {
       .ebs-datepicker {
-        border-color: $primary-color;
+        border-color: var(--primary-color);
       }
       .react-datepicker-wrapper:first-child {
         .ebs-datepicker {
-          border-right-color: $primary-color;
+          border-right-color: var(--primary-color);
         }
       }
     }
@@ -156,7 +165,8 @@
 }
 
 // DatePicker Popper
-.react-datepicker-popper.ebs-datepicker__popper {
+.react-datepicker-popper.ebs-datepicker__popper,
+.react-datepicker.ebs-datepicker__calendar {
   z-index: 999999;
 
   * {
@@ -174,7 +184,7 @@
     }
 
     &__time-list-item:hover {
-      background-color: $primary-100;
+      background-color: var(--primary-100);
       color: $text-color;
     }
 
@@ -184,7 +194,7 @@
 
     &__time-list-item--selected,
     &__time-list-item--selected:hover {
-      background-color: $primary-color;
+      background-color: var(--primary-color);
       color: $white;
     }
 
@@ -308,15 +318,15 @@
     }
 
     &__day:hover {
-      background-color: $primary-100;
+      background-color: var(--primary-100);
     }
 
     &__day--in-range {
-      background-color: $primary-100;
+      background-color: var(--primary-100);
     }
 
     &__day--in-selecting-range {
-      background-color: $primary-000;
+      background-color: var(--primary-000);
     }
 
     &__day--selected,
@@ -326,7 +336,7 @@
     &__day--range-start,
     &__day--range-end {
       border-radius: rem($border-radius);
-      background-color: $primary-color;
+      background-color: var(--primary-color);
       color: $white;
     }
   }
@@ -347,7 +357,7 @@
     color: $text-color;
 
     @include hover-state {
-      background-color: $primary-100;
+      background-color: var(--primary-100);
     }
   }
 
@@ -357,7 +367,7 @@
     ul.react-datepicker__time-list
     li.react-datepicker__time-list-item {
     @include hover-state {
-      background-color: $primary-100;
+      background-color: var(--primary-100);
     }
   }
 
@@ -366,6 +376,10 @@
     .react-datepicker__time-box
     ul.react-datepicker__time-list
     li.react-datepicker__time-list-item--selected {
-    background-color: $primary-color;
+    background-color: var(--primary-color);
   }
+}
+
+.react-datepicker.ebs-datepicker__calendar {
+  border: 1px solid $border-color;
 }

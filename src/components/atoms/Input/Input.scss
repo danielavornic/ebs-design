@@ -15,7 +15,7 @@
 
   &--active,
   &.focus {
-    border-color: $primary-color;
+    border-color: var(--primary-color);
     background-color: $white;
 
     .ebs-input {
@@ -47,7 +47,7 @@
     }
   }
 
-  &.ebs-input__style-grey {
+  &.ebs-input-style--grey {
     background-color: $grey-50;
   }
 
@@ -65,8 +65,8 @@
   display: block;
   font-size: rem(14px);
   padding: rem($select-padding-y $select-padding-x);
-  line-height: $line-height-base;
   color: $heading-color;
+  min-height: 100%;
 
   @include placeholder {
     color: $text-color-secondary;
@@ -103,8 +103,12 @@
 
   &__prefix.not-clickable,
   &__suffix.not-clickable {
-    cursor: pointer;
+    cursor: default;
     z-index: 2;
+  }
+
+  &__wrapper:not(.has-prefix) &__prefix + &__container {
+    padding-left: rem($gutter-size + $gutter-size / 2);
   }
 
   &__suffix {
@@ -118,13 +122,16 @@
 
   // Sizes
   &--small {
+    max-height: rem($base-size-sm);
     font-size: rem(12px);
     padding: rem($input-padding-y-sm $input-padding-x-sm);
   }
   &--medium {
+    max-height: rem($base-size);
     padding: rem($input-padding-y $input-padding-x);
   }
   &--large {
+    max-height: rem($base-size-lg);
     padding: rem($input-padding-y-lg $input-padding-x-lg);
   }
 }
@@ -133,23 +140,11 @@
   position: absolute;
   right: rem($gutter-size / 2);
   top: 50%;
+  color: $text-color;
   transform: translate3d(0, -50%, 0);
-  z-index: 2;
-
-  .ebs-button__wrapper {
-    border-radius: 100%;
-    width: rem($gutter-size + 4);
-    height: rem($gutter-size + 4);
-
-    .ebs-button {
-      @include flex-center-vert;
-      padding: 0;
-
-      .ebs-icon {
-        padding: rem(2px);
-        font-size: 1rem;
-        color: $white;
-      }
-    }
-  }
+  font-size: rem(22px);
+  display: inline-block;
+  padding: rem(0 7px);
+  margin: rem(0 -7px);
+  @include close-icon-container;
 }

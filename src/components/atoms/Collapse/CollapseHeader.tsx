@@ -3,13 +3,11 @@ import cn from 'classnames';
 import { Icon } from 'components/atoms';
 import { CollapseContext } from './Collapse';
 
-export interface CollapseHeaderProps {
-  className?: string;
-  style?: React.CSSProperties;
+export interface CollapseHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onClick?: () => void;
 }
 
-export const CollapseHeader: React.FC<CollapseHeaderProps> = ({ className, style, onClick, children }) => {
+export const CollapseHeader: React.FC<CollapseHeaderProps> = ({ className, style, onClick, children, ...props }) => {
   const { bordered, height, setHeight } = React.useContext(CollapseContext);
 
   // Collapse card body
@@ -36,11 +34,11 @@ export const CollapseHeader: React.FC<CollapseHeaderProps> = ({ className, style
         'ebs-collapse__header--bordered': bordered,
       })}
       onClick={handleClick}
-      style={style}
+      {...props}
     >
       <div className="ebs-collapse__header__title">{children}</div>
       <div className="ebs-collapse__header__toggle" onClick={toggle}>
-        <Icon type={height === 0 ? 'arrow-top' : 'arrow-bottom'} model="bold" />
+        <Icon type={height === 0 ? 'arrow-bottom' : 'arrow-top'} model="bold" />
       </div>
     </header>
   );

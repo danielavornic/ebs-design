@@ -1,39 +1,28 @@
 import * as React from 'react';
 import cn from 'classnames';
-import { Extra, Label, Button, Icon } from 'components/atoms';
+import { Extra, Label } from 'components/atoms';
 import { Loader } from 'components/molecules';
 
 export type InputSize = 'small' | 'medium' | 'large';
 export type InputStyleType = 'white' | 'grey';
-export type InputType = 'text' | 'number' | 'email' | 'password';
 
-export interface InputProps {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix' | 'onChange'> {
   styleType?: InputStyleType;
-  type?: InputType;
-  onClick?: (e: any) => void;
-  onChange?: (value: string) => void;
-  onKeyDown?: (e: React.KeyboardEvent) => void;
-  onClickPrefix?: () => void;
-  onClickSuffix?: () => void;
   hasError?: boolean;
   label?: React.ReactNode;
   extra?: React.ReactNode;
-  name?: string;
-  value?: string | number | null | undefined;
   prefix?: React.ReactElement;
   suffix?: React.ReactElement;
-  placeholder?: string;
   loading?: boolean;
-  disabled?: boolean;
-  width?: number | string;
   autoFocus?: boolean;
-  className?: string;
   containerClass?: string;
-  isClearable?: boolean;
   size?: InputSize;
-  min?: string | number;
-  max?: string | number;
-  pattern?: string;
+  isClearable?: boolean;
+  onClick?: (e: any) => void;
+  onChange?: (value: string | number) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
+  onClickPrefix?: () => void;
+  onClickSuffix?: () => void;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -58,9 +47,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       autoFocus,
       className,
       containerClass,
-      min,
-      max,
-      pattern,
       isClearable,
       ...props
     },
@@ -70,19 +56,25 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const hasValue = React.useMemo(() => value != undefined && value.toString().length, [value]);
 
     const onClickHandler = ({ target }: React.ChangeEvent<HTMLInputElement>): void => {
-      if (onChange !== undefined) {
-        onChange(target.value);
+      if (onChange) {
+        onChange(
+          props.min !== undefined && parseFloat(props.min as string) >= parseFloat(target.value)
+            ? props.min
+            : props.max !== undefined && parseFloat(props.max as string) <= parseFloat(target.value)
+            ? props.max
+            : target.value,
+        );
       }
     };
 
     const onClickPrefixHandler = (): void => {
-      if (!loading && props.onClickPrefix !== undefined) {
+      if (!loading && props.onClickPrefix) {
         props.onClickPrefix();
       }
     };
 
     const onClickSuffixHandler = (): void => {
-      if (!loading && props.onClickSuffix !== undefined) {
+      if (!loading && props.onClickSuffix) {
         props.onClickSuffix();
       }
     };
@@ -96,7 +88,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             `ebs-input__wrapper`,
             `ebs-input__wrapper--${hasValue ? `active` : `unactive`}`,
             `ebs-input__type--${type}`,
-            `ebs-input-style-${styleType}`,
+            `ebs-input-style--${styleType}`,
             className,
             {
               'ebs-input__empty': value === '',
@@ -107,48 +99,42 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             },
           )}
         >
-          {loading || prefix ? (
+          {(loading && !suffix) || prefix ? (
             <div
               className={cn(`ebs-input__prefix`, !loading && props.onClickPrefix ? `clickable` : `not-clickable`)}
               onClick={onClickPrefixHandler}
             >
-              {loading ? <Loader.Spinner size="small" /> : prefix}
+              {loading && !suffix ? <Loader.Spinner size="small" /> : prefix}
             </div>
           ) : null}
 
-          {suffix ? (
+          {(loading && !prefix && suffix) || suffix ? (
             <div
               className={cn(`ebs-input__suffix`, !loading && props.onClickSuffix ? `clickable` : `not-clickable`)}
               onClick={onClickSuffixHandler}
             >
-              {loading && !prefix ? <Loader.Spinner size="small" /> : suffix}
+              {loading && suffix ? <Loader.Spinner size="small" /> : suffix}
             </div>
           ) : null}
 
           <div className="ebs-input__container">
             <input
               ref={ref}
-              min={min}
-              max={max}
-              pattern={pattern}
               name={name}
               type={type}
+              value={value}
               autoFocus={autoFocus}
               className={cn('ebs-input', `ebs-input--${size}`)}
-              value={value || ''}
-              placeholder={props.placeholder}
               disabled={disabled || loading}
               onClick={onClick}
               onKeyDown={onKeyDown}
               onChange={onClickHandler}
-              style={{ minWidth: width }}
+              {...props}
             />
 
             {hasValue && isClearable ? (
-              <div className="ebs-input__clear">
-                <Button size="small" type="primary" onClick={onChange && (() => onChange(''))}>
-                  <Icon type="close" model="bold" />
-                </Button>
+              <div className="ebs-input__clear" onClick={onChange && (() => onChange(''))}>
+                &#215;
               </div>
             ) : null}
           </div>

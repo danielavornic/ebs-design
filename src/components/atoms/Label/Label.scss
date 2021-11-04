@@ -84,9 +84,9 @@
   }
 
   &--primary {
-    background-color: $primary-000;
-    color: $primary-color;
-    border-color: $primary-color;
+    background-color: var(--primary-000);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
   }
 
   &--fill {
@@ -139,8 +139,10 @@
   &__prefix,
   &__suffix {
     position: absolute;
-    top: calc(50% + 1px);
+    top: 50%;
     transform: translateY(-50%);
+    display: flex;
+    align-items: center;
 
     .ebs-icon__close:hover svg {
       opacity: 0.5;
