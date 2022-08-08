@@ -36,12 +36,16 @@ const Options: React.FC<OptionsProps> = ({
   value,
   emptyLabel = 'No found',
   newOption,
+  onPrev,
   onNext,
   onClose,
   onChange,
   onClickAddNew,
+  children,
+  className,
   ...props
 }) => {
+  const initialOptionsLength = React.useRef(options.length);
   const ref = React.useRef<HTMLDivElement | null>(null);
   const { offsetBottom, maxHeight, setState } = React.useContext(Context);
   const [activeItem, setActiveItem] = React.useState(0);
@@ -123,6 +127,26 @@ const Options: React.FC<OptionsProps> = ({
     }
   };
 
+  // Scroll to the next view
+  React.useEffect(() => {
+    if (scrollMode === 'regular' && !loading) {
+      const items = document.getElementsByClassName('ebs-select__options-item');
+      const lastElement = items[items.length - initialOptionsLength.current] || items[items.length - 1] || items[0];
+
+      if (lastElement) {
+        const lastElementRect = lastElement?.getBoundingClientRect();
+        const styles = window.getComputedStyle(lastElement);
+        const margin = parseFloat(styles['marginTop']) + parseFloat(styles['marginBottom']);
+        const elementHeight = lastElementRect?.height + margin;
+
+        ref?.current?.scrollTo({
+          top: elementHeight * items.length - elementHeight * (initialOptionsLength.current + 1), // keep last element visible
+          left: 0,
+        });
+      }
+    }
+  }, [options.length, scrollMode]);
+
   return (
     <div
       ref={ref}
@@ -132,7 +156,7 @@ const Options: React.FC<OptionsProps> = ({
         {
           'ebs-select__options--multiple': ['multiple', 'tags'].includes(mode),
         },
-        props.className,
+        className,
       )}
       style={maxHeight ? { ...props.style, maxHeight } : props.style}
     >
@@ -160,7 +184,6 @@ const Options: React.FC<OptionsProps> = ({
                     : value === option.value
                 }
                 mode={mode}
-                text={option.text}
                 selected={activeItem === key + 1}
                 onClick={onChangeHandler}
                 {...option}

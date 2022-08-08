@@ -89,6 +89,73 @@ Regular.args = {
   suffix: undefined,
 };
 
+export const Multiple: React.FC<SelectProps> & { args: SelectProps } = ({ children, ...props }) => {
+  const [search, setSearch] = React.useState<string>('');
+  const [list, setList] = React.useState<Option[]>([]);
+  const [value, setValue] = React.useState<any>();
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
+  const [loading, setLoaded] = React.useState(true);
+
+  React.useEffect(() => {
+    setLoaded(true);
+
+    // fetch(`https://randomuser.me/api/1.2/?page=${page}&results=${limit}&seed=abc&inc=id,name,picture`)
+    fetch(`https://api.portainer.devebs.net/nomenclatures/states?page=${page}&search=${search}`, {
+      headers: {
+        authorization:
+          'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjQ4NjUxMzkyLCJqdGkiOiJjNDI4OGVlM2Y0Zjc0ZWQ0YWRkMDk0YzEyY2I1NDMwNCIsInVzZXJfaWQiOjQ2MCwidXNlcm5hbWUiOiJnZW9yZ2Vyb3RhcnUxMjM0QGdtYWlsLmNvbSJ9.Q1IHSf5G4-ufbbf_BbA3AuZK55fWjE-vs3CsodoN99w',
+        'service-token': '6058d8eabc254157b6163b8747470841',
+      },
+      mode: 'cors',
+      credentials: 'include',
+    })
+      .then((response) => response.json())
+      .then(({ results }) => {
+        const newList: Option[] = [];
+        results.forEach((item) => {
+          newList.push({
+            value: item.id,
+            text: item.full_name,
+            // text: (
+            //   <AvatarInline
+            //     img={item.picture.thumbnail}
+            //     type="primary"
+            //     alt={`${capitalize(item.name.title)} ${capitalize(item.name.first)} ${capitalize(item.name.last)}`}
+            //   />
+            // ),
+          });
+        });
+
+        setTotal(1000);
+        setList(newList);
+        setLoaded(false);
+      });
+  }, [page]);
+
+  return (
+    <Template>
+      <Select loading={loading} value={value} onChange={setValue} {...props}>
+        <Select.Search value={search} onSearch={(val) => setSearch(val)} />
+
+        <Select.Options>
+          {list.map((item, i) => (
+            <Select.Options.Item key={i} value={item.value}>
+              {item.text}
+            </Select.Options.Item>
+          ))}
+        </Select.Options>
+
+        <Select.Pagination count={total} limit={limit} page={page} setPage={setPage} mode="regular" />
+      </Select>
+    </Template>
+  );
+};
+
+Multiple.args = {
+  mode: 'multiple',
+};
+
 export const InfiniteScrollPagination: React.FC<SelectProps> & { args: SelectProps } = ({ children, ...props }) => {
   const [search, setSearch] = React.useState<string>('');
   const [list, setList] = React.useState<Option[]>([]);

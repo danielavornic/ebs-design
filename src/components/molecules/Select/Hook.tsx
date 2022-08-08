@@ -122,8 +122,9 @@ export default ({ loading, ref, children, ...params }): Props => {
     if (!isEqual($options, options, 'value') && !isLoaded) {
       setState({
         isLoaded: isSearch ? false : true,
-        options:
-          paginationProps?.mode === 'scroll' && !isSearch ? (uniqueArray(options, $options) as Option[]) : $options,
+        options: uniqueArray(options, $options) as Option[],
+        // options:
+        // paginationProps?.mode === 'scroll' && !isSearch ? (uniqueArray(options, $options) as Option[]) : options,
       });
     }
   }, [$options, options, isLoaded, paginationProps, isSearch]);
